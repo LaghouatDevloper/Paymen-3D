@@ -1,0 +1,1879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Payment Method Selector: Gold 4D Design</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!--Jquery-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css?family=Poppins:400,600,700&display=swap');
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .content {
+            width: 100%;
+            max-width: 680px;
+            perspective: 1000px;
+        }
+
+        .container {
+            background: linear-gradient(145deg, #d4af37, #ffd700, #f0e68c);
+            border-radius: 25px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 25px 50px rgba(212, 175, 55, 0.3),
+                0 15px 35px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                inset 0 -5px 15px rgba(0, 0, 0, 0.2);
+            transform-style: preserve-3d;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Gold foil texture effect */
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.2) 0%, transparent 50%);
+            z-index: 0;
+            border-radius: 25px;
+        }
+
+        /* 4D depth effect */
+        .container::after {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border-radius: 20px;
+            background: linear-gradient(145deg, rgba(212, 175, 55, 0.9), rgba(255, 215, 0, 0.9), rgba(240, 230, 140, 0.9));
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            z-index: -1;
+        }
+
+        #msform {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /*For hiding not active divs*/
+        #msform .fieldset:not(:first-of-type) {
+            display: none
+        }
+
+        #progressbar {
+            margin-bottom: 30px;
+            overflow: hidden;
+            color: #5a4a00;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        #progressbar li {
+            list-style-type: none;
+            font-size: 15px;
+            width: 25%; /* Adjusted for 4 steps */
+            float: left;
+            position: relative;
+            font-weight: 600;
+        }
+
+        #progressbar #price:before {
+            font-family: FontAwesome;
+            content: "\f155"
+        }
+
+        #progressbar #payment:before {
+            font-family: FontAwesome;
+            content: "\f09d"
+        }
+
+        #progressbar #crypto:before {
+            font-family: FontAwesome;
+            content: "\f15a"
+        }
+
+        #progressbar #confirm:before {
+            font-family: FontAwesome;
+            content: "\f00c"
+        }
+
+        #progressbar li:before {
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            display: block;
+            font-size: 25px;
+            color: #5a4a00;
+            background: linear-gradient(145deg, #ffd700, #d4af37);
+            border-radius: 50%;
+            margin: 10px auto 15px auto;
+            padding: 5px;
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.2),
+                inset 0 2px 5px rgba(255, 255, 255, 0.4),
+                inset 0 -2px 5px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        #progressbar li:after {
+            content: '';
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(to right, #d4af37, #ffd700, #d4af37);
+            position: absolute;
+            left: 0;
+            top: 30px;
+            z-index: -1; /* Put it behind the numbers */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        #progressbar li.active:before,
+        #progressbar li.active:after {
+            background: linear-gradient(145deg, #ffd700, #b8860b);
+            color: #5a4a00;
+        }
+
+        .form-card .fs-title {
+            margin-top: 10px;
+            font-size: 28px;
+            font-weight: 700;
+            color: #5a4a00;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+            position: relative;
+            display: inline-block;
+        }
+
+        .form-card .fs-title::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 25%;
+            width: 50%;
+            height: 3px;
+            background: linear-gradient(to right, transparent, #b8860b, transparent);
+            border-radius: 2px;
+        }
+
+        /* Improved navigation buttons */
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+            gap: 20px;
+        }
+
+        .btn {
+            position: relative;
+            text-decoration: none;
+            color: #5a4a00;
+            background: linear-gradient(145deg, #ffd700, #d4af37);
+            padding: 14px 25px;
+            border-radius: 50px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            outline: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                inset 0 -1px 5px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            z-index: 0;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: linear-gradient(145deg, #ffdf40, #e6c130);
+            transform: translateY(-3px);
+            box-shadow: 
+                0 8px 20px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                inset 0 -1px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 
+                0 2px 10px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                inset 0 -1px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn i {
+            margin: 0 5px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: 
+                0 2px 5px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -1px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:disabled:hover {
+            background: linear-gradient(145deg, #ffd700, #d4af37);
+        }
+
+        /* Remove Custom Button Style */
+        .btn-remove {
+            background: linear-gradient(145deg, #ff6b6b, #e05555);
+            color: white;
+        }
+
+        .btn-remove:hover {
+            background: linear-gradient(145deg, #ff7f7f, #e66a6a);
+        }
+
+        .radio-group {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .radio-group .radio {
+            border: 0;
+            outline: 0;
+            height: 80px;
+            width: 80px;
+            background: linear-gradient(145deg, #ffd700, #d4af37);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                inset 0 -1px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .radio img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
+            transition: all 0.3s ease;
+            filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.3));
+        }
+        
+        .radio:hover {
+            background: linear-gradient(145deg, #ffdf40, #e6c130);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 
+                0 10px 20px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                inset 0 -1px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .radio:hover img {
+            transform: scale(1.1);
+        }
+        
+        .radio.selected {
+            background: linear-gradient(145deg, #b8860b, #daa520);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.3),
+                inset 0 2px 5px rgba(255, 255, 255, 0.3),
+                inset 0 -2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .circle-container {
+            display: flex;
+            justify-content: center;
+        }
+        
+        .success {
+            margin-top: 40px;
+            margin-bottom: 30px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #ffd700, #d4af37);
+            width: 200px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 
+                0 10px 25px rgba(0, 0, 0, 0.3),
+                inset 0 5px 10px rgba(255, 255, 255, 0.4),
+                inset 0 -5px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .success img {
+            width: 150px;
+            height: 150px;
+            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        /* Payment details form - GOLD STYLE */
+        .payment-details {
+            margin-top: 20px;
+            padding: 25px;
+            border-radius: 20px;
+            background: linear-gradient(145deg, rgba(255, 215, 0, 0.8), rgba(212, 175, 55, 0.8));
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                inset 0 -1px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .payment-details h3 {
+            font-size: 18px;
+            color: #5a4a00;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .payment-details .form-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .payment-details .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .payment-details .form-row .form-group {
+            flex: 1;
+        }
+
+        .payment-details label {
+            display: block;
+            font-size: 14px;
+            color: #5a4a00;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-align: left;
+            text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
+        }
+
+        .payment-details input {
+            width: 100%;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.5));
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            color: #5a4a00;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                inset 0 2px 5px rgba(0, 0, 0, 0.1),
+                0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .payment-details input::placeholder {
+            color: rgba(90, 74, 0, 0.6);
+        }
+
+        .payment-details input:focus {
+            outline: none;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            box-shadow: 
+                inset 0 2px 5px rgba(0, 0, 0, 0.1),
+                0 2px 10px rgba(212, 175, 55, 0.5);
+        }
+
+        .payment-details input.valid {
+            border: 1px solid rgba(76, 175, 80, 0.6);
+            box-shadow: 
+                inset 0 2px 5px rgba(0, 0, 0, 0.1),
+                0 2px 5px rgba(76, 175, 80, 0.3);
+        }
+
+        .payment-details input.invalid {
+            border: 1px solid rgba(244, 67, 54, 0.6);
+            box-shadow: 
+                inset 0 2px 5px rgba(0, 0, 0, 0.1),
+                0 2px 5px rgba(244, 67, 54, 0.3);
+        }
+
+        .payment-details .validation-icon {
+            position: absolute;
+            right: 15px;
+            top: 42px;
+            font-size: 18px;
+        }
+
+        .payment-details .validation-icon.valid {
+            color: rgba(76, 175, 80, 0.8);
+        }
+
+        .payment-details .validation-icon.invalid {
+            color: rgba(244, 67, 54, 0.8);
+        }
+
+        .payment-details .error-message {
+            color: rgba(244, 67, 54, 0.8);
+            font-size: 12px;
+            margin-top: 5px;
+            text-align: left;
+            display: none;
+            font-weight: 600;
+        }
+
+        .payment-details .helper-text {
+            color: rgba(90, 74, 0, 0.7);
+            font-size: 12px;
+            margin-top: 5px;
+            text-align: left;
+        }
+
+        .payment-details .card-type-icon {
+            position: absolute;
+            right: 15px;
+            top: 42px;
+            font-size: 24px;
+            color: rgba(90, 74, 0, 0.7);
+        }
+
+        .payment-details .required {
+            color: rgba(244, 67, 54, 0.8);
+        }
+
+        .payment-details .btn {
+            width: 100%;
+            margin-top: 10px;
+            padding: 14px;
+            font-size: 16px;
+        }
+
+        .payment-details .btn .spinner {
+            display: none;
+            margin-left: 10px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .payment-details .btn.loading .spinner {
+            display: inline-block;
+        }
+
+        .payment-details .btn.loading .btn-text {
+            display: none;
+        }
+
+        /* Payment summary */
+        .payment-summary {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 20px;
+            background: linear-gradient(145deg, rgba(255, 215, 0, 0.8), rgba(212, 175, 55, 0.8));
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                inset 0 -1px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .payment-summary h3 {
+            font-size: 18px;
+            color: #5a4a00;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .payment-summary p {
+            font-size: 14px;
+            color: #5a4a00;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(90, 74, 0, 0.2);
+            padding-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .payment-summary .method-icon {
+            width: 30px;
+            height: 30px;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
+        /* Crypto Payment Details */
+        .crypto-payment-details {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 20px;
+            background: linear-gradient(145deg, rgba(255, 215, 0, 0.8), rgba(212, 175, 55, 0.8));
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                inset 0 -1px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .crypto-payment-details h3 {
+            font-size: 18px;
+            color: #5a4a00;
+            margin-bottom: 15px;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .crypto-address {
+            font-family: monospace;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.5));
+            padding: 12px;
+            border-radius: 10px;
+            margin: 15px 0;
+            word-break: break-all;
+            font-size: 14px;
+            color: #5a4a00;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                inset 0 2px 5px rgba(0, 0, 0, 0.1),
+                0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            margin: 15px auto;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.6));
+            padding: 10px;
+            border-radius: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        .qr-code img {
+            width: 180px;
+            height: 180px;
+            object-fit: contain;
+        }
+
+        .crypto-info {
+            font-size: 14px;
+            color: #5a4a00;
+            margin: 10px 0;
+            line-height: 1.4;
+            font-weight: 600;
+        }
+
+        .secure-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            color: rgba(76, 175, 80, 0.9);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .secure-indicator i {
+            margin-right: 5px;
+        }
+
+        /* Price selection styles */
+        .price-selection {
+            margin-top: 20px;
+            padding: 25px;
+            border-radius: 20px;
+            background: linear-gradient(145deg, rgba(255, 215, 0, 0.8), rgba(212, 175, 55, 0.8));
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            width: 90%;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.4),
+                inset 0 -1px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .price-selection h3 {
+            font-size: 18px;
+            color: #5a4a00;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .price-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .price-option {
+            padding: 15px 10px;
+            border-radius: 15px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.5));
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            color: #5a4a00;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                0 3px 10px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        .price-option:hover {
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+            transform: translateY(-3px);
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .price-option.selected {
+            background: linear-gradient(145deg, #b8860b, #daa520);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                0 5px 15px rgba(0, 0, 0, 0.3),
+                inset 0 2px 5px rgba(255, 255, 255, 0.3),
+                inset 0 -2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        .price-amount {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .price-duration {
+            font-size: 12px;
+            color: rgba(90, 74, 0, 0.8);
+            margin-top: 4px;
+        }
+
+        .price-option.selected .price-duration {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .custom-price {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .custom-price input {
+            width: 120px;
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.5));
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            color: #5a4a00;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 
+                inset 0 2px 5px rgba(0, 0, 0, 0.1),
+                0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .custom-price input::placeholder {
+            color: rgba(90, 74, 0, 0.6);
+        }
+
+        .custom-price .btn {
+            padding: 10px 15px;
+            font-size: 14px;
+        }
+
+        .selected-price-summary {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 15px;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.5));
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            text-align: center;
+            box-shadow: 
+                0 3px 10px rgba(0, 0, 0, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        .selected-price-summary h4 {
+            font-size: 16px;
+            color: #5a4a00;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .selected-price-summary .selected-amount {
+            font-size: 24px;
+            font-weight: bold;
+            color: #5a4a00;
+        }
+
+        .selected-price-summary .selected-duration {
+            font-size: 14px;
+            color: rgba(90, 74, 0, 0.8);
+            margin-top: 5px;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(145deg, #d4af37, #ffd700);
+            color: #5a4a00;
+            padding: 12px 24px;
+            border-radius: 50px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: linear-gradient(145deg, #4CAF50, #66BB6A);
+            color: white;
+        }
+
+        .toast.error {
+            background: linear-gradient(145deg, #F44336, #EF5350);
+            color: white;
+        }
+
+        .toast i {
+            margin-right: 10px;
+        }
+
+        hr {
+            border: none;
+            height: 3px;
+            background: linear-gradient(to right, transparent, #d4af37, #ffd700, #d4af37, transparent);
+            margin: 20px 0;
+            border-radius: 2px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .price-options {
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            }
+            
+            .radio-group .radio {
+                width: 70px;
+                height: 70px;
+            }
+            
+            .radio img {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .payment-details, .payment-summary, .crypto-payment-details, .price-selection {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- The HTML content remains exactly the same as your original code -->
+    <div class="content">
+        <div class="container">
+            <form id="msform">
+                <!-- progressbar -->
+                <ul id="progressbar">
+                    <li class="active" id="price"></li>
+                    <li id="payment"></li>
+                    <li id="crypto"></li>
+                    <li id="confirm"></li>
+                </ul>
+                <hr>
+                
+                <!-- Price Selection Step -->
+                <div class="fieldset">
+                    <div class="form-card">
+                        <h2 class="fs-title">Select Your Package</h2> 
+                        
+                        <div class="price-selection">
+                            <h3>Choose your price and duration</h3>
+                            
+                            <div class="price-options">
+                                <!-- Predefined price options -->
+                                <div class="price-option" data-price="10" data-duration="1 day">
+                                    <div class="price-amount">$10</div>
+                                    <div class="price-duration">1 day</div>
+                                </div>
+                                <div class="price-option" data-price="15" data-duration="2 days">
+                                    <div class="price-amount">$15</div>
+                                    <div class="price-duration">2 days</div>
+                                </div>
+                                <div class="price-option" data-price="20" data-duration="3 days">
+                                    <div class="price-amount">$20</div>
+                                    <div class="price-duration">3 days</div>
+                                </div>
+                                <div class="price-option" data-price="30" data-duration="">
+                                    <div class="price-amount">$30</div>
+                                    <div class="price-duration">Custom</div>
+                                </div>
+                                <div class="price-option" data-price="35" data-duration="">
+                                    <div class="price-amount">$35</div>
+                                    <div class="price-duration">Custom</div>
+                                </div>
+                                <div class="price-option" data-price="40" data-duration="">
+                                    <div class="price-amount">$40</div>
+                                    <div class="price-duration">Custom</div>
+                                </div>
+                                <div class="price-option" data-price="45" data-duration="">
+                                    <div class="price-amount">$45</div>
+                                    <div class="price-duration">Custom</div>
+                                </div>
+                                <div class="price-option" data-price="50" data-duration="">
+                                    <div class="price-amount">$50</div>
+                                    <div class="price-duration">Custom</div>
+                                </div>
+                                <div class="price-option" data-price="60" data-duration="">
+                                    <div class="price-amount">$60</div>
+                                    <div class="price-duration">Custom</div>
+                                </div>
+                                <div class="price-option" data-price="65" data-duration="">
+                                    <div class="price-amount">$65</div>
+                                    <div class="price-duration">Custom</div>
+                                </div>
+                                <div class="price-option" data-price="70" data-duration="">
+                                    <div class="price-amount">$70</div>
+                                    <div class="price-duration">Custom</div>
+                                </div>
+                                <div class="price-option" data-price="75" data-duration="">
+                                    <div class="price-amount">$75</div>
+                                    <div class="price-duration">Custom</div>
+                                </div>
+                                <div class="price-option" data-price="80" data-duration="">
+                                    <div class="price-amount">$80</div>
+                                    <div class="price-duration">Custom</div>
+                                </div>
+                                <div class="price-option" data-price="90" data-duration="">
+                                    <div class="price-amount">$90</div>
+                                    <div class="price-duration">Custom</div>
+                                </div>
+                                <div class="price-option" data-price="95" data-duration="">
+                                    <div class="price-amount">$95</div>
+                                    <div class="price-duration">Custom</div>
+                                </div>
+                                <div class="price-option" data-price="100" data-duration="">
+                                    <div class="price-amount">$100</div>
+                                    <div class="price-duration">Custom</div>
+                                </div>
+                                <div class="price-option" data-price="150" data-duration="">
+                                    <div class="price-amount">$150</div>
+                                    <div class="price-duration">Custom</div>
+                                </div>
+                                <div class="price-option" data-price="200" data-duration="">
+                                    <div class="price-amount">$200</div>
+                                    <div class="price-duration">Custom</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Custom price input -->
+                            <div class="custom-price">
+                                <input type="number" id="custom-price-input" placeholder="Custom amount" min="1" max="1000">
+                                <button class="btn" id="set-custom-price" type="button">Set Custom</button>
+                                <button class="btn btn-remove" id="remove-custom-price" type="button" style="display: none;"><i class="fa fa-times"></i> Remove</button>
+                            </div>
+                            
+                            <!-- Selected price summary -->
+                            <div class="selected-price-summary" id="selected-price-summary" style="display: none;">
+                                <h4>Selected Package</h4>
+                                <div class="selected-amount" id="selected-amount">$0</div>
+                                <div class="selected-duration" id="selected-duration"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="nav-buttons">
+                        <button class="btn next" name="next" type="button" disabled><i class="fa fa-chevron-right"></i> Continue</button>   
+                    </div>
+                </div>
+                
+                <!-- Payment Method Selection Step -->
+                <div class="fieldset">
+                    <div class="form-card">
+                        <h2 class="fs-title">Select Payment Method</h2> 
+                        
+                        <div class="radio-group">
+                            <button type="button" class="radio" data-value="amazon">
+                                <img src="https://i.postimg.cc/cC4Ym6rV/amazon.png" alt="Amazon Pay">
+                            </button>
+                            <button type="button" class="radio" data-value="paypal">
+                                <img src="https://i.postimg.cc/fLcw2v6P/paypal.png" alt="PayPal">
+                            </button>
+                            <button type="button" class="radio" data-value="visa">
+                                <img src="https://i.postimg.cc/Sxz9VBxN/visa.png" alt="Visa">
+                            </button>
+                            <button type="button" class="radio" data-value="mastercard">
+                                <img src="https://i.postimg.cc/tCJWnZ06/mastercard.png" alt="Mastercard">
+                            </button>
+                            <button type="button" class="radio crypto-btn" data-value="crypto">
+                                <img src="Images/crypto.png" alt="Crypto">
+                            </button>
+                        </div>
+                        
+                        <!-- Payment Details Form -->
+                        <div class="payment-details" id="payment-details">
+                            <h3>Enter Payment Details</h3>
+                            
+                            <div class="form-group">
+                                <label for="card-name">Name on Card <span class="required">*</span></label>
+                                <input type="text" id="card-name" placeholder="John Doe" autocomplete="cc-name" required>
+                                <i class="validation-icon"></i>
+                                <div class="error-message">Please enter the name as it appears on your card</div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="card-number">Card Number <span class="required">*</span></label>
+                                <input type="text" id="card-number" placeholder="1234 5678 9012 3456" maxlength="19" autocomplete="cc-number" required>
+                                <i class="card-type-icon"></i>
+                                <i class="validation-icon"></i>
+                                <div class="error-message">Please enter a valid card number</div>
+                                <div class="helper-text">We accept Visa, Mastercard, and other major cards</div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="expiry-date">Expiry Date <span class="required">*</span></label>
+                                    <input type="text" id="expiry-date" placeholder="MM/YY" maxlength="5" autocomplete="cc-exp" required>
+                                    <i class="validation-icon"></i>
+                                    <div class="error-message">Please enter a valid expiry date</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="cvv">CVV <span class="required">*</span></label>
+                                    <input type="text" id="cvv" placeholder="123" maxlength="4" autocomplete="cc-csc" required>
+                                    <i class="validation-icon"></i>
+                                    <div class="error-message">Please enter a valid CVV</div>
+                                    <div class="helper-text">3-4 digit code on the back of your card</div>
+                                </div>
+                            </div>
+                            
+                            <button class="btn" id="save-payment" type="button">
+                                <span class="btn-text"><i class="icon fa fa-save"></i> Save Payment</span>
+                                <i class="spinner fa fa-spinner"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Payment Summary -->
+                        <div class="payment-summary" id="payment-summary">
+                            <h3>Payment Summary</h3>
+                            <p><span>Payment Method:</span> <span id="summary-method">Not selected</span></p>
+                            <p><span>Card Number:</span> <span id="summary-number">XXXX XXXX XXXX XXXX</span></p>
+                            <p><span>Expiry Date:</span> <span id="summary-expiry">MM/YY</span></p>
+                            <p><span>Name on Card:</span> <span id="summary-name">Not provided</span></p>
+                            <p><span>Transaction Amount:</span> <span id="summary-amount">$99.99</span></p>
+                        </div>
+                    </div>
+                    <div class="nav-buttons">
+                        <button class="btn prev" name="prev" type="button"><i class="fa fa-chevron-left"></i> Back</button>   
+                        <button class="btn next" name="next" type="button" disabled><i class="fa fa-chevron-right"></i> Continue</button>   
+                    </div>
+                </div>
+                
+                <!-- Crypto Payment Step -->
+                <div class="fieldset">
+                    <div class="form-card">
+                        <h2 class="fs-title">Cryptocurrency Payment</h2> 
+                        
+                        <div class="radio-group">
+                            <!-- Bitcoin -->
+                            <button type="button" class='radio crypto-btn' data-value="bitcoin">
+                                <img src="Images/bitcoin-btc-logo.svg" alt="Bitcoin">
+                            </button>
+                            <!-- Solana -->
+                            <button type="button" class='radio' data-value="solana">
+                                <img src="Images/SOL.png" alt="Solana">
+                            </button>
+                            <!-- BNB -->
+                            <button type="button" class='radio' data-value="bnb">
+                                <img src="Images/bnb-bnb-logo.svg" alt="BNB">
+                            </button>
+                            <!-- Ethereum -->
+                            <button type="button" class='radio' data-value="ethereum">
+                                <img src="Images/ETH.png" alt="Ethereum">
+                            </button>
+                            <!-- XRP -->
+                            <button type="button" class='radio' data-value="xrp">
+                                <img src="Images/xrp.png" alt="XRP">
+                            </button>
+                            <!-- TON -->
+                            <button type="button" class='radio' data-value="ton">
+                                <img src="Images/toncoin-ton-logo.svg" alt="TON">
+                            </button>
+                            <!-- Litecoin -->
+                            <button type="button" class='radio' data-value="litecoin">
+                                <img src="Images/litecoin-ltc-logo.svg" alt="Litecoin">
+                            </button>
+                            <!-- USDT TRC20 -->
+                            <button type="button" class='radio' data-value="usdt">
+                                <img src="Images/USDT.png" alt="USDT TRC20">
+                            </button>
+                        </div>
+                        
+                        <!-- Crypto Payment Details -->
+                        <div class="crypto-payment-details" id="crypto-payment-details">
+                            <h3>Cryptocurrency Payment</h3>
+                            <div class="crypto-info">
+                                Send the exact amount to the address below. Your order will be confirmed after 3 network confirmations.
+                            </div>
+                            <div class="qr-code">
+                                <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=bitcoin:1K9mxX7Sz4Q311t3SN48YMQa5Pq4TDiyfr?amount=0.0025" alt="Bitcoin QR Code">
+                            </div>
+                            <div class="crypto-address" id="crypto-address">
+                                
+                            </div>
+                            <div class="crypto-info" id="crypto-amount">
+                                Amount: <strong>0.0025 BTC</strong>
+                            </div>
+                            <div class="crypto-info">
+                                Network: <span id="crypto-network">Bitcoin</span>
+                            </div>
+                            <button class="btn" id="copy-address" type="button" style="margin-top: 10px;"><i class="icon fa fa-copy"></i> Copy Address</button>
+                        </div>
+                    </div>
+                    <div class="nav-buttons">
+                        <button class="btn prev" name="prev" type="button"><i class="fa fa-chevron-left"></i> Back</button>   
+                        <button class="btn next" name="next" type="button" disabled><i class="fa fa-chevron-right"></i> Continue</button>   
+                    </div>
+                </div>
+                
+                <!-- Confirmation Step -->
+                <div class="fieldset">
+                    <div class="form-card">
+                        <h2 class="fs-title">Payment Successful!</h2> 
+                       <div class="circle-container">
+                            <div class="success"><img src="https://i.postimg.cc/gcN30y7d/success.png" alt="Success"></div>
+                       </div>   
+                       <h2 class="fs-title">Thank You!</h2>
+                       <div class="secure-indicator">
+                           <i class="fas fa-check-circle"></i> Your transaction was completed securely
+                       </div>
+                       <div class="payment-summary">
+                            <h3>Payment Details</h3>
+                            <p><span>Payment Method:</span> <span id="final-method">Not selected</span></p>
+                            <p><span>Transaction Amount:</span> <span id="final-amount">$99.99</span></p>
+                            <p><span>Processing Fee:</span> <span id="final-fee">$2.50</span></p>
+                            <p><span>Total Paid:</span> <span id="final-total">$102.49</span></p>
+                        </div>            
+                    </div>
+                    <div class="nav-buttons">
+                        <button class="btn prev" name="prev" type="button"><i class="fa fa-chevron-left"></i> Back</button>   
+                        <button class="btn" id="complete-btn" name="complete" type="button"><i class="fa fa-check"></i> Complete</button>   
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+   <!--Icons-->
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+   <script>
+    // The JavaScript code remains exactly the same as in your original code
+    // I've kept it unchanged to ensure all functionality works properly
+    $(document).ready(function(){
+    var current_fs, next_fs, prev_fs;
+    var opacity;
+    var selectedPaymentMethod = '';
+    var selectedCryptoMethod = '';
+    var selectedPrice = 0;
+    var selectedDuration = '';
+    var isCustomPrice = false;
+    var paymentDetails = {
+        method: '',
+        name: '',
+        number: '',
+        expiry: '',
+        cvv: ''
+    };
+    
+    // Toast notification function
+    function showToast(message, type = 'success') {
+        // Remove any existing toast
+        $('.toast').remove();
+        
+        // Create new toast
+        var icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+        var toast = $('<div class="toast ' + type + '"><i class="fa ' + icon + '"></i> ' + message + '</div>');
+        
+        // Add to body and show
+        $('body').append(toast);
+        setTimeout(function() {
+            toast.addClass('show');
+        }, 100);
+        
+        // Hide after 3 seconds
+        setTimeout(function() {
+            toast.removeClass('show');
+            setTimeout(function() {
+                toast.remove();
+            }, 300);
+        }, 3000);
+    }
+    
+    // Card type detection
+    function detectCardType(number) {
+        const regex = {
+            visa: /^4[0-9]{12}(?:[0-9]{3})?$/,
+            mastercard: /^5[1-5][0-9]{14}$/,
+            amex: /^3[47][0-9]{13}$/,
+            discover: /^6(?:011|5[0-9]{2})[0-9]{12}$/
+        };
+        
+        for (var type in regex) {
+            if (regex[type].test(number)) {
+                return type;
+            }
+        }
+        
+        return 'unknown';
+    }
+    
+    // Validate card number using Luhn algorithm
+    function validateCardNumber(number) {
+        // Remove spaces and dashes
+        number = number.replace(/[\s-]/g, '');
+        
+        // Check if the number contains only digits
+        if (!/^\d+$/.test(number)) {
+            return false;
+        }
+        
+        // Implement Luhn algorithm
+        var sum = 0;
+        var isEven = false;
+        
+        for (var i = number.length - 1; i >= 0; i--) {
+            var digit = parseInt(number.charAt(i), 10);
+            
+            if (isEven) {
+                digit *= 2;
+                if (digit > 9) {
+                    digit -= 9;
+                }
+            }
+            
+            sum += digit;
+            isEven = !isEven;
+        }
+        
+        return (sum % 10) === 0;
+    }
+    
+    // Validate expiry date
+    function validateExpiryDate(date) {
+        // Check format MM/YY
+        if (!/^\d{2}\/\d{2}$/.test(date)) {
+            return false;
+        }
+        
+        var parts = date.split('/');
+        var month = parseInt(parts[0], 10);
+        var year = parseInt(parts[1], 10) + 2000; // Convert YY to YYYY
+        
+        // Check month range
+        if (month < 1 || month > 12) {
+            return false;
+        }
+        
+        // Check if date is in the future
+        var now = new Date();
+        var expiry = new Date(year, month - 1, 1); // month is 0-indexed in JS
+        
+        // Set to end of month
+        expiry.setMonth(expiry.getMonth() + 1);
+        expiry.setDate(0);
+        
+        return expiry > now;
+    }
+    
+    // Validate CVV based on card type
+    function validateCVV(cvv, cardType) {
+        cvv = cvv.replace(/\s/g, '');
+        
+        if (cardType === 'amex') {
+            // AMEX uses 4 digits
+            return /^\d{4}$/.test(cvv);
+        } else {
+            // Other cards use 3 digits
+            return /^\d{3}$/.test(cvv);
+        }
+    }
+    
+    // Validate name on card
+    function validateName(name) {
+        // Check if name is not empty and contains only letters, spaces, hyphens, and apostrophes
+        return /^[a-zA-Z\s'-]+$/.test(name) && name.trim().length > 0;
+    }
+    
+    // Show validation feedback
+    function showValidationFeedback(inputId, isValid, message) {
+        var input = $('#' + inputId);
+        var icon = input.siblings('.validation-icon');
+        var errorMsg = input.siblings('.error-message');
+        
+        if (isValid) {
+            input.removeClass('invalid').addClass('valid');
+            icon.removeClass('invalid fa-times-circle').addClass('valid fa-check-circle');
+            errorMsg.hide();
+        } else {
+            input.removeClass('valid').addClass('invalid');
+            icon.removeClass('valid fa-check-circle').addClass('invalid fa-times-circle');
+            if (message) {
+                errorMsg.text(message).show();
+            } else {
+                errorMsg.hide();
+            }
+        }
+    }
+    
+    // Update card type icon
+    function updateCardTypeIcon(cardType) {
+        var icon = $('#card-number').siblings('.card-type-icon');
+        
+        switch(cardType) {
+            case 'visa':
+                icon.html('<i class="fab fa-cc-visa"></i>');
+                break;
+            case 'mastercard':
+                icon.html('<i class="fab fa-cc-mastercard"></i>');
+                break;
+            case 'amex':
+                icon.html('<i class="fab fa-cc-amex"></i>');
+                break;
+            case 'discover':
+                icon.html('<i class="fab fa-cc-discover"></i>');
+                break;
+            default:
+                icon.html('<i class="far fa-credit-card"></i>');
+        }
+    }
+    
+    // Check if all payment details are valid
+    function arePaymentDetailsValid() {
+        var cardName = $('#card-name').val();
+        var cardNumber = $('#card-number').val().replace(/\s/g, '');
+        var expiryDate = $('#expiry-date').val();
+        var cvv = $('#cvv').val();
+        var cardType = detectCardType(cardNumber);
+        
+        return validateName(cardName) && 
+               validateCardNumber(cardNumber) && 
+               validateExpiryDate(expiryDate) && 
+               validateCVV(cvv, cardType);
+    }
+    
+    // Update payment amount in all steps
+    function updatePaymentAmount(amount, duration) {
+        selectedPrice = amount;
+        selectedDuration = duration;
+        
+        // Update summary amounts
+        $('#summary-amount').text('$' + amount);
+        $('#final-amount').text('$' + amount);
+        
+        // Calculate fee and total
+        var fee = (amount * 0.025).toFixed(2); // 2.5% fee
+        var total = (parseFloat(amount) + parseFloat(fee)).toFixed(2);
+        
+        $('#final-fee').text('$' + fee);
+        $('#final-total').text('$' + total);
+        
+        // Update crypto amounts based on selected price
+        updateCryptoAmounts(amount);
+    }
+    
+    // Update crypto amounts based on selected price
+    function updateCryptoAmounts(amount) {
+        var conversionRates = {
+            bitcoin: 0.000025, // 1 USD = 0.000025 BTC
+            solana: 0.05,      // 1 USD = 0.05 SOL
+            bnb: 0.003,        // 1 USD = 0.003 BNB
+            ethereum: 0.0005,  // 1 USD = 0.0005 ETH
+            xrp: 1.5,          // 1 USD = 1.5 XRP
+            ton: 0.15,         // 1 USD = 0.15 TON
+            litecoin: 0.005,   // 1 USD = 0.005 LTC
+            usdt: 1            // 1 USD = 1 USDT
+        };
+        
+        // Update the crypto amount display if a crypto is selected
+        if (selectedCryptoMethod) {
+            var cryptoAmount = (amount * conversionRates[selectedCryptoMethod]).toFixed(6);
+            var symbol = getCryptoSymbol(selectedCryptoMethod);
+            $('#crypto-amount').html('Amount: <strong>' + cryptoAmount + ' ' + symbol + '</strong>');
+        }
+    }
+    
+    // Get crypto symbol
+    function getCryptoSymbol(crypto) {
+        var symbols = {
+            bitcoin: 'BTC',
+            solana: 'SOL',
+            bnb: 'BNB',
+            ethereum: 'ETH',
+            xrp: 'XRP',
+            ton: 'TON',
+            litecoin: 'LTC',
+            usdt: 'USDT'
+        };
+        
+        return symbols[crypto] || crypto.toUpperCase();
+    }
+    
+    // Price selection handling
+    $('.price-option').click(function(){
+        $('.price-option').removeClass('selected');
+        $(this).addClass('selected');
+        
+        var price = $(this).data('price');
+        var duration = $(this).data('duration');
+        
+        // Update selected price summary
+        $('#selected-price-summary').show();
+        $('#selected-amount').text('$' + price);
+        $('#selected-duration').text(duration);
+        
+        // Update payment amount
+        updatePaymentAmount(price, duration);
+        
+        // Reset custom price input and hide remove button
+        $('#custom-price-input').val('');
+        $('#remove-custom-price').hide();
+        isCustomPrice = false;
+        
+        // Enable next button
+        $('.fieldset').eq(0).find('.next').prop('disabled', false);
+    });
+    
+    // Custom price handling
+    $('#set-custom-price').click(function(){
+        var customPrice = $('#custom-price-input').val();
+        if (customPrice && customPrice > 0) {
+            // Remove selection from predefined options
+            $('.price-option').removeClass('selected');
+            
+            // Update selected price summary
+            $('#selected-price-summary').show();
+            $('#selected-amount').text('$' + customPrice);
+            $('#selected-duration').text('Custom');
+            
+            // Update payment amount
+            updatePaymentAmount(customPrice, 'Custom');
+            
+            // Show remove button
+            $('#remove-custom-price').show();
+            isCustomPrice = true;
+            
+            // Enable next button
+            $('.fieldset').eq(0).find('.next').prop('disabled', false);
+            
+            showToast('Custom price set successfully!');
+        } else {
+            showToast('Please enter a valid amount', 'error');
+        }
+    });
+    
+    // Remove custom price handling
+    $('#remove-custom-price').click(function(){
+        // Clear custom price input
+        $('#custom-price-input').val('');
+        
+        // Hide selected price summary
+        $('#selected-price-summary').hide();
+        
+        // Hide remove button
+        $(this).hide();
+        isCustomPrice = false;
+        
+        // Reset selected price
+        selectedPrice = 0;
+        selectedDuration = '';
+        
+        // Disable next button
+        $('.fieldset').eq(0).find('.next').prop('disabled', true);
+        
+        showToast('Custom price removed');
+    });
+    
+    $(".next").click(function(){
+       current_fs = $(this).closest('.fieldset');
+       next_fs = current_fs.next();
+       
+       // Check if we're on the first step and using traditional payment
+       if ($(".fieldset").index(current_fs) === 1 && selectedPaymentMethod !== 'crypto') {
+           // Skip crypto step and go directly to success
+           next_fs = $('.fieldset').eq(3); // Success step is index 3
+           
+           // Update progress bar to show all steps as active
+           $("#progressbar li").addClass("active");
+       } else {
+           // Normal flow - add next step as active
+           $("#progressbar li").eq($(".fieldset").index(next_fs)).addClass("active");
+       }
+     
+    //show the next fieldset
+    next_fs.show();
+    //hide the current fieldset with style
+    current_fs.animate({opacity: 0}, {
+    step: function(now) {
+    // for making fielset appear animation
+    opacity = 1 - now;
+
+    current_fs.css({
+    'display': 'none',
+    'position': 'relative'
+    });
+
+    next_fs.css({'opacity': opacity});
+    },
+    duration: 600
+    });
+    });
+
+    $(".prev").click(function(){
+       current_fs = $(this).closest('.fieldset');
+       prev_fs = current_fs.prev();
+      
+       // Check if we're going back from success to first step
+       if ($(".fieldset").index(current_fs) === 3 && selectedPaymentMethod !== 'crypto') {
+           // We're going back from success to first step (skipping crypto)
+           prev_fs = $('.fieldset').eq(1);
+           
+           // Update progress bar to show only first two steps as active
+           $("#progressbar li").removeClass("active");
+           $("#progressbar li").eq(0).addClass("active");
+           $("#progressbar li").eq(1).addClass("active");
+       } else {
+           // Normal flow - remove current step from active
+           $("#progressbar li").eq($(".fieldset").index(current_fs)).removeClass("active");
+       }
+     
+    //show the previous fieldset
+    prev_fs.show();
+    //hide the current fieldset with style
+    current_fs.animate({opacity: 0}, {
+    step: function(now) {
+    // for making fielset appear animation
+    opacity = 1 - now;
+
+    current_fs.css({
+    'display': 'none',
+    'position': 'relative'
+    });
+
+    prev_fs.css({'opacity': opacity});
+    },
+    duration: 600
+    });
+    });
+    
+    // Traditional payment methods
+    $('.fieldset').eq(1).find('.radio-group .radio').click(function(){
+        $(this).parent().find('.radio').removeClass('selected');
+        $(this).addClass('selected');
+        selectedPaymentMethod = $(this).data('value');
+        
+        // Show payment details form for traditional methods
+        if (selectedPaymentMethod !== 'crypto') {
+            $('#payment-details').show();
+            $('#payment-summary').hide();
+            
+            // Enable next button only if payment details are valid
+            if (arePaymentDetailsValid()) {
+                $('.fieldset').eq(1).find('.next').prop('disabled', false);
+            } else {
+                $('.fieldset').eq(1).find('.next').prop('disabled', true);
+            }
+        } else {
+            // If Crypto is selected, go directly to the crypto step
+            $('#payment-details').hide();
+            $('#payment-summary').hide();
+            
+            current_fs = $(this).closest('.fieldset');
+            next_fs = $('.fieldset').eq(2); // Crypto step is index 2
+            
+            // Update progress bar
+            $("#progressbar li").eq(2).addClass("active"); 
+            
+            // Show the crypto fieldset
+            next_fs.show();
+            // Hide the current fieldset with style
+            current_fs.animate({opacity: 0}, {
+                step: function(now) {
+                    opacity = 1 - now;
+                    current_fs.css({
+                        'display': 'none',
+                        'position': 'relative'
+                    });
+                    next_fs.css({'opacity': opacity});
+                },
+                duration: 600
+            });
+        }
+    });
+    
+    // Crypto payment methods
+    $('.fieldset').eq(2).find('.radio-group .radio').click(function(){
+        $(this).parent().find('.radio').removeClass('selected');
+        $(this).addClass('selected');
+        selectedCryptoMethod = $(this).data('value');
+        
+        // Show crypto payment details
+        $('#crypto-payment-details').show();
+        
+        // Update crypto details based on selected currency
+        updateCryptoDetails(selectedCryptoMethod);
+        
+        // Enable next button
+        $('.fieldset').eq(2).find('.next').prop('disabled', false);
+    });
+    
+    // Update crypto payment details based on selected cryptocurrency
+    function updateCryptoDetails(crypto) {
+        var addresses = {
+            bitcoin: '',
+            solana: '',
+            bnb: '',
+            ethereum: '',
+            xrp: '',
+            ton: '',
+            litecoin: '',
+            usdt: ''
+        };
+        
+        var networks = {
+            bitcoin: 'Bitcoin',
+            solana: 'Solana',
+            bnb: 'Binance Smart Chain',
+            ethereum: 'Ethereum',
+            xrp: 'XRP Ledger',
+            ton: 'TON Blockchain',
+            litecoin: 'Litecoin',
+            usdt: 'TRON (TRC20)'
+        };
+        
+        // Update address and network
+        $('#crypto-address').text(addresses[crypto]);
+        $('#crypto-network').text(networks[crypto]);
+        
+        // Update crypto amount based on selected price
+        updateCryptoAmounts(selectedPrice);
+        
+        // Update QR code with the new address and amount
+        var qrData = '';
+        var symbol = getCryptoSymbol(crypto);
+        var amount = (selectedPrice * conversionRates[crypto]).toFixed(6);
+        
+        if (crypto === 'bitcoin') {
+            qrData = 'bitcoin:' + addresses[crypto] + '?amount=' + amount;
+        } else if (crypto === 'ethereum') {
+            qrData = 'ethereum:' + addresses[crypto] + '?value=' + (amount * 1000000000000000000); // Convert to wei
+        } else if (crypto === 'litecoin') {
+            qrData = 'litecoin:' + addresses[crypto] + '?amount=' + amount;
+        } else if (crypto === 'usdt') {
+            qrData = 'tron:' + addresses[crypto] + '?amount=' + amount;
+        } else {
+            qrData = addresses[crypto];
+        }
+        
+        $('.qr-code img').attr('src', 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(qrData));
+    }
+    
+    // Conversion rates for cryptocurrencies
+    var conversionRates = {
+        bitcoin: 0.000025, // 1 USD = 0.000025 BTC
+        solana: 0.05,      // 1 USD = 0.05 SOL
+        bnb: 0.003,        // 1 USD = 0.003 BNB
+        ethereum: 0.0005,  // 1 USD = 0.0005 ETH
+        xrp: 1.5,          // 1 USD = 1.5 XRP
+        ton: 0.15,         // 1 USD = 0.15 TON
+        litecoin: 0.005,   // 1 USD = 0.005 LTC
+        usdt: 1            // 1 USD = 1 USDT
+    };
+    
+    // Save payment details
+    $('#save-payment').click(function() {
+        var cardName = $('#card-name').val();
+        var cardNumber = $('#card-number').val().replace(/\s/g, '');
+        var expiryDate = $('#expiry-date').val();
+        var cvv = $('#cvv').val();
+        var cardType = detectCardType(cardNumber);
+        
+        // Validate all fields
+        var isNameValid = validateName(cardName);
+        var isNumberValid = validateCardNumber(cardNumber);
+        var isExpiryValid = validateExpiryDate(expiryDate);
+        var isCvvValid = validateCVV(cvv, cardType);
+        
+        // Show validation feedback
+        showValidationFeedback('card-name', isNameValid, 'Please enter the name as it appears on your card');
+        showValidationFeedback('card-number', isNumberValid, 'Please enter a valid card number');
+        showValidationFeedback('expiry-date', isExpiryValid, 'Please enter a valid expiry date (MM/YY)');
+        showValidationFeedback('cvv', isCvvValid, 'Please enter a valid CVV');
+        
+        // If all fields are valid, save the payment details
+        if (isNameValid && isNumberValid && isExpiryValid && isCvvValid) {
+            // Show loading state
+            $(this).addClass('loading');
+            
+            // Simulate API call
+            setTimeout(function() {
+                // Format card number for display
+                var formattedNumber = '**** **** **** ' + cardNumber.slice(-4);
+                
+                // Update payment details object
+                paymentDetails = {
+                    method: selectedPaymentMethod,
+                    name: cardName,
+                    number: formattedNumber,
+                    expiry: expiryDate,
+                    cvv: cvv
+                };
+                
+                // Update payment summary
+                $('#summary-method').text(selectedPaymentMethod.charAt(0).toUpperCase() + selectedPaymentMethod.slice(1));
+                $('#summary-name').text(cardName);
+                $('#summary-number').text(formattedNumber);
+                $('#summary-expiry').text(expiryDate);
+                
+                // Hide payment form and show summary
+                $('#payment-details').hide();
+                $('#payment-summary').show();
+                
+                // Remove loading state
+                $('#save-payment').removeClass('loading');
+                
+                // Enable next button
+                $('.fieldset').eq(1).find('.next').prop('disabled', false);
+                
+                // Show success toast
+                showToast('Payment information saved successfully!');
+            }, 1500);
+        } else {
+            // Show error toast
+            showToast('Please correct the errors in the form', 'error');
+        }
+    });
+    
+    // Real-time validation for card name
+    $('#card-name').on('input blur', function() {
+        var isValid = validateName($(this).val());
+        showValidationFeedback('card-name', isValid, 'Please enter the name as it appears on your card');
+        
+        // Enable/disable next button based on overall form validity
+        if (selectedPaymentMethod !== 'crypto') {
+            $('.fieldset').eq(1).find('.next').prop('disabled', !arePaymentDetailsValid());
+        }
+    });
+    
+    // Real-time validation for card number
+    $('#card-number').on('input blur', function() {
+        var value = $(this).val().replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+        var formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
+        $(this).val(formattedValue);
+        
+        var isValid = validateCardNumber(value);
+        showValidationFeedback('card-number', isValid, 'Please enter a valid card number');
+        
+        // Update card type icon
+        if (value.length >= 4) {
+            var cardType = detectCardType(value);
+            updateCardTypeIcon(cardType);
+            
+            // Update CVV helper text based on card type
+            if (cardType === 'amex') {
+                $('#cvv').siblings('.helper-text').text('4 digit code on the front of your card');
+                $('#cvv').attr('maxlength', '4');
+            } else {
+                $('#cvv').siblings('.helper-text').text('3 digit code on the back of your card');
+                $('#cvv').attr('maxlength', '3');
+            }
+        } else {
+            $('#card-number').siblings('.card-type-icon').html('<i class="far fa-credit-card"></i>');
+        }
+        
+        // Enable/disable next button based on overall form validity
+        if (selectedPaymentMethod !== 'crypto') {
+            $('.fieldset').eq(1).find('.next').prop('disabled', !arePaymentDetailsValid());
+        }
+    });
+    
+    // Real-time validation for expiry date
+    $('#expiry-date').on('input blur', function() {
+        var value = $(this).val().replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+        if (value.length >= 2) {
+            value = value.substring(0, 2) + '/' + value.substring(2, 4);
+        }
+        $(this).val(value);
+        
+        var isValid = validateExpiryDate(value);
+        var message = isValid ? '' : 'Please enter a valid expiry date (MM/YY)';
+        if (!isValid && value.length === 5) {
+            message = 'Your card has expired';
+        }
+        showValidationFeedback('expiry-date', isValid, message);
+        
+        // Enable/disable next button based on overall form validity
+        if (selectedPaymentMethod !== 'crypto') {
+            $('.fieldset').eq(1).find('.next').prop('disabled', !arePaymentDetailsValid());
+        }
+    });
+    
+    // Real-time validation for CVV
+    $('#cvv').on('input blur', function() {
+        var value = $(this).val().replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+        $(this).val(value);
+        
+        var cardNumber = $('#card-number').val().replace(/\s/g, '');
+        var cardType = detectCardType(cardNumber);
+        var isValid = validateCVV(value, cardType);
+        
+        var message = 'Please enter a valid CVV';
+        if (cardType === 'amex') {
+            message = 'Please enter a 4-digit CVV';
+        } else if (cardType !== 'unknown') {
+            message = 'Please enter a 3-digit CVV';
+        }
+        
+        showValidationFeedback('cvv', isValid, message);
+        
+        // Enable/disable next button based on overall form validity
+        if (selectedPaymentMethod !== 'crypto') {
+            $('.fieldset').eq(1).find('.next').prop('disabled', !arePaymentDetailsValid());
+        }
+    });
+    
+    // Copy crypto address to clipboard
+    $('#copy-address').click(function() {
+        var address = $('#crypto-address').text();
+        navigator.clipboard.writeText(address).then(function() {
+            showToast('Address copied to clipboard');
+        }, function() {
+            // Fallback for older browsers
+            var textArea = document.createElement("textarea");
+            textArea.value = address;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textArea);
+            showToast('Address copied to clipboard');
+        });
+    });
+    
+    // Complete button
+    $('#complete-btn').click(function() {
+        // Update final payment details
+        if (selectedPaymentMethod) {
+            $('#final-method').text(selectedPaymentMethod.charAt(0).toUpperCase() + selectedPaymentMethod.slice(1));
+        } else if (selectedCryptoMethod) {
+            $('#final-method').text(selectedCryptoMethod.charAt(0).toUpperCase() + selectedCryptoMethod.slice(1));
+        }
+        
+        showToast('Thank you for your payment!');
+    });
+});
+   </script>
+</body>
+</html>
